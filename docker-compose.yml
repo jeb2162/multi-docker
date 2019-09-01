@@ -1,0 +1,68 @@
+version: '3'
+networks:
+  datadog-network:
+    driver: bridge
+services: 
+  postgres:
+    image: 'postgres:latest'
+    networks:
+      - datadog-network
+  redis:
+    networks:
+      - datadog-network
+    depends_on:
+      - nginx
+    image: 'redis:latest'
+  nginx:
+    networks:
+      - datadog-network
+    restart: always
+    build:
+      dockerfile: Dockerfile.dev
+      context: ./nginx
+    ports:
+      - '3050:80'
+  api:
+    networks:
+      - datadog-network
+    depends_on:
+      - redis
+      - postgres
+    build:
+      dockerfile: Dockerfile.dev
+      context: ./server
+    volumes:
+      - /app/node_modules
+      - ./server:/app
+    environment:
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - PGUSER=postgres
+      - PGHOST=postgres
+      - PGDATABASE=postgres
+      - PGPASSWORD=postgres_password
+      - PGPORT=5432
+  client:
+    networks:
+      - datadog-network
+    build: 
+      dockerfile: Dockerfile.dev
+      context: ./client
+    volumes:
+      - /app/node_modules
+      - ./client:/app
+  worker:
+    depends_on:
+      - redis
+    networks:
+      - datadog-network
+    environment:
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+    build:
+      dockerfile: Dockerfile.dev
+      context: ./worker
+    volumes:
+      - /app/node_modules
+      - ./worker:/app
+      
