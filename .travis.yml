@@ -12,7 +12,7 @@ after_success:
   - docker build -t jeb2162/multi-client ./client
   - docker build -t jeb2162/multi-nginx ./nginx
   - docker build -t jeb2162/multi-server ./server
-  - docker build -t jeb2162/multi-worker ./working
+  - docker build -t jeb2162/multi-worker ./worker
   # Log in to docker CLI
   - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_ID" --password-stdin
   # Take those images and push them to docker hub
