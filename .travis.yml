@@ -1,0 +1,23 @@
+sudo: required
+services:
+  - docker
+
+before_install:
+  - docker build -t jeb2162/react-test -f ./client/Dockerfile.dev ./client
+
+script:
+  - docker run jeb2162/react-test npm test -- --coverage
+
+after_success:
+  - docker build -t jeb2162/multi-client ./client
+  - docker build -t jeb2162/multi-nginx ./multi-nginx
+  - docker build -t jeb2162/multi-server ./multi-server
+  - docker build -t jeb2162/multi-worker ./working
+  # Log in to docker CLI
+  - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_ID" --password-stdin
+  # Take those images and push them to docker hub
+  - docker push jeb2162/multi-client
+  - docker push jeb2162/multi-nginx
+  - docker push jeb2162/multi-server
+  - docker push jeb2162/multi-worker
+  
