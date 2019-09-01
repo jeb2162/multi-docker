@@ -3,7 +3,35 @@
 	"containerDefinitions": [
 		{
 			"name":"client",
-			"image":"jeb2162/multi-client"
+			"image":"jeb2162/multi-client",
+			"hostname":"client",
+			"essential":false
+		},
+		{
+			"name":"server",
+			"image":"jeb2162/multi-server",
+			"hostname":"api",
+			"essential":false
+		},
+		{
+			"name":"worker",
+			"image":"jeb2162/multi-worker",
+			"hostname":"worker",
+			"essential":false
+		},
+		{
+			"name":"nginx",
+			"image":"jeb2162/multi-nginx",
+			"hostname":"nginx",
+			"essential":true,
+			"portMappings":[
+				{
+					"hostPort": 80,
+					"containerPort":80
+				}
+			],
+			"links": ["client","server"]
 		}
+
 	]
 }
