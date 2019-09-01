@@ -1,0 +1,9 @@
+{
+	"AWSEBDockerrunVersion": 2,
+	"containerDefinitions": [
+		{
+			"name":"client",
+			"image":"jeb2162/multi-client"
+		}
+	]
+}
